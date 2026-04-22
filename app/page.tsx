@@ -105,6 +105,10 @@ export default function PrelovedApp() {
 
   if (!isMounted) return null; // Mencegah Hydration Error
 
+  const handleClickDetail = (id: string) => {
+    router.push(user ? `/product/${id}` : `/login`)
+  }
+
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-slate-900 font-sans">
       
@@ -118,16 +122,6 @@ export default function PrelovedApp() {
             <div className="max-w-lg">
               <h2 className="text-4xl md:text-5xl font-black leading-tight mb-4">Beri Kesempatan Kedua Untuk Barangmu.</h2>
               <p className="text-indigo-200 text-lg">Platform terpercaya jual beli barang preloved berkualitas di Indonesia.</p>
-            </div>
-            <div className="flex gap-4">
-              <div className="bg-indigo-800/50 p-6 rounded-3xl border border-indigo-700 text-center">
-                <div className="text-3xl font-black mb-1">{items.length}</div>
-                <div className="text-indigo-300 text-xs uppercase font-bold tracking-widest">Produk Aktif</div>
-              </div>
-              <div className="bg-indigo-800/50 p-6 rounded-3xl border border-indigo-700 text-center">
-                <div className="text-3xl font-black mb-1">2.4k</div>
-                <div className="text-indigo-300 text-xs uppercase font-bold tracking-widest">Pembeli</div>
-              </div>
             </div>
           </div>
         </div>
@@ -160,8 +154,8 @@ export default function PrelovedApp() {
                     </button>
                   ) : (
                     <button 
-                      className="w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
-                      onClick={() => router.push(`/product/${item.id}`)}
+                      className="cursor-pointer w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
+                      onClick={() => handleClickDetail(item.id)}
                     >
                       LIHAT DETAIL
                     </button>
@@ -171,56 +165,6 @@ export default function PrelovedApp() {
             ))}
           </div>
         )}
-
-        {/* VIEW: UPLOAD */}
-        {view === "upload" && (
-          <div className="max-w-xl mx-auto mt-10">
-            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-50">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-black">Jual Barang</h2>
-                <button onClick={() => setView("home")} className="p-2 hover:bg-slate-100 rounded-full transition"><X /></button>
-              </div>
-              
-              <form onSubmit={handleUpload} className="space-y-5">
-                <div>
-                  <label className="text-xs font-black text-slate-400 uppercase ml-2 mb-2 block">Nama Barang</label>
-                  <input 
-                    placeholder="Contoh: Sepatu Nike Air Jordan" 
-                    className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    value={formData.title}
-                    onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    required 
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-black text-slate-400 uppercase ml-2 mb-2 block">Harga (Rp)</label>
-                  <input 
-                    type="number"
-                    placeholder="Contoh: 1200000" 
-                    className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    value={formData.price}
-                    onChange={(e) => setFormData({...formData, price: e.target.value})}
-                    required 
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-black text-slate-400 uppercase ml-2 mb-2 block">Link Foto Barang</label>
-                  <input 
-                    placeholder="https://images.unsplash.com/..." 
-                    className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    value={formData.image}
-                    onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  />
-                </div>
-                <div className="pt-4 flex gap-3">
-                   <button type="button" onClick={() => setView("home")} className="flex-1 py-4 font-black text-slate-400 hover:bg-slate-50 rounded-2xl transition">BATAL</button>
-                   <button className="flex-2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">UPLOAD SEKARANG</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
       </main>
 
       {/* FOOTER */}

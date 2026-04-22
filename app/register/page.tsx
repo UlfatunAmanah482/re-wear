@@ -26,7 +26,7 @@ export default function RegisterPage() {
                 placeholder="Nama Lengkap"
                 className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
                 value={authData.name}
-                onChange={(e) => setAuthData({ ...authData, email: e.target.value })}
+                onChange={(e) => setAuthData({ ...authData, name: e.target.value })}
                 required
               />
               <input

@@ -37,28 +37,9 @@ export default function ProfilePage() {
               </div>
               <p className="text-blue-100 mb-6">{user.email}</p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                {/* <button className="bg-white text-blue-600 px-6 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-gray-100 transition">
-                <Settings size={16}/> Edit Profil
-              </button> */}
-                <button onClick={logout} className="bg-red-500/20 hover:bg-red-500 text-white border border-red-500/50 px-6 py-2 rounded-xl text-sm font-bold transition">
+                <button onClick={logout} className="bg-red-500/20 hover:bg-red-500 text-white border border-red-500/50 px-6 py-2 rounded-xl text-sm font-bold transition cursor-pointer">
                   Logout
                 </button>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 p-6 bg-black/10 backdrop-blur-md rounded-[2rem] border border-white/10">
-              <div className="text-center">
-                <p className="text-2xl font-black">{myItems.length}</p>
-                <p className="text-[10px] uppercase font-bold text-blue-200">Produk</p>
-              </div>
-              <div className="text-center border-x border-white/10 px-6">
-                <p className="text-2xl font-black">12</p>
-                <p className="text-[10px] uppercase font-bold text-blue-200">Terjual</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-black">4.9</p>
-                <p className="text-[10px] uppercase font-bold text-blue-200">Rating</p>
               </div>
             </div>
           </div>
@@ -85,7 +66,7 @@ export default function ProfilePage() {
           <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
             <Package className="mx-auto text-gray-300 mb-4" size={48} />
             <p className="text-gray-500 font-bold">Anda belum mengunggah barang apapun.</p>
-            <button onClick={() => router.push("/upload")} className="mt-4 text-blue-600 font-bold">Mulai Jual Sekarang &rarr;</button>
+            <button onClick={() => router.push("/upload")} className="mt-4 text-blue-600 font-bold cursor-pointer">Mulai Jual Sekarang &rarr;</button>
           </div>
         )}
       </main>

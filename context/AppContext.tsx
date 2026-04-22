@@ -1,24 +1,7 @@
 "use client";
 
+import { Item, User } from "@/types";
 import React, { createContext, useContext, useState, useEffect } from "react";
-
-// --- DEFINISI TYPE ---
-export interface Item {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  seller: string;
-  sellerEmail: string;
-}
-
-export interface User {
-  email: string;
-  role: "USER" | "ADMIN";
-  name: string;
-}
 
 interface AppContextType {
   items: Item[];
@@ -42,6 +25,7 @@ const INITIAL_ITEMS: Item[] = [
     image: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?w=800",
     seller: "Budi",
     sellerEmail: "budi@mail.com",
+    phone: "62895393389757"
   },
   {
     id: 2,
@@ -52,6 +36,7 @@ const INITIAL_ITEMS: Item[] = [
     image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800",
     seller: "Siska",
     sellerEmail: "siska@mail.com",
+    phone: "62895393389757"
   },
   {
     id: 3,
@@ -62,7 +47,8 @@ const INITIAL_ITEMS: Item[] = [
     image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800",
     seller: "Andi",
     sellerEmail: "andi@mail.com",
-  }
+    phone: "62895393389757"
+  },
 ];
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -101,7 +87,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // --- 3. FUNGSI LOGIN ---
   const login = (email: string) => {
     // Logika Role: Jika email mengandung kata "admin", otomatis jadi ADMIN
-    const role = email.toLowerCase().includes("admin") ? "ADMIN" : "USER";
+    const role = email.toLowerCase().includes("admin") ? "admin" : "user";
     const name = email.split("@")[0];
     
     const newUser: User = { email, role, name };
@@ -122,7 +108,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const newItem: Item = {
       ...data,
       id: Date.now(), // Generate ID unik pake timestamp
-      seller: user.name,
+      seller: user?.name || "",
       sellerEmail: user.email,
     };
 

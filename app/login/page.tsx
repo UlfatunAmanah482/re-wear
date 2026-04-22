@@ -18,6 +18,7 @@ export default function LoginPage() {
 
     localStorage.setItem("preloved_user", JSON.stringify(newUser));
     setAuthData({ email: "", password: "" });
+    router.push("/")
   };
 
   return (

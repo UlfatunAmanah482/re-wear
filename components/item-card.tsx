@@ -1,6 +1,7 @@
 
-import { Item, useApp } from '@/context/AppContext';
+import { useApp } from '@/context/AppContext';
 import { formatIDR } from '@/lib/utils';
+import { Item } from '@/types';
 import Link from 'next/link';
 
 export default function ItemCard({ item }: { item: Item }) {
@@ -18,7 +19,7 @@ export default function ItemCard({ item }: { item: Item }) {
         </div>
       </Link>
       
-      {user?.role === 'ADMIN' && (
+      {user?.role === 'admin' && (
         <button 
           onClick={(e) => {
             e.preventDefault(); // Biar tidak trigger Link
