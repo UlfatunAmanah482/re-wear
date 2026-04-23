@@ -16,7 +16,7 @@ const INITIAL_ITEMS = [
 export default function PrelovedApp() {
   // --- STATES ---
   const [items, setItems] = useState<any[]>([]);
-  const [user, setUser] = useState<{ email: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ email: string } | null>(null);
   const [view, setView] = useState("home"); // home, login, register, upload
   const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState({ title: "", price: "", image: "" });
@@ -48,31 +48,6 @@ export default function PrelovedApp() {
       localStorage.setItem("preloved_items", JSON.stringify(items));
     }
   }, [items, isMounted]);
-
-  // --- LOGIC: AUTHENTICATION ---
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!authData.email || !authData.password) return alert("Isi semua bidang!");
-
-    const role = authData.email.toLowerCase().includes("admin") ? "ADMIN" : "USER";
-    const newUser = { email: authData.email, role };
-
-    setUser(newUser);
-    localStorage.setItem("preloved_user", JSON.stringify(newUser));
-    setAuthData({ email: "", password: "" });
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("preloved_user");
-    setView("home");
-  };
-
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Registrasi Berhasil! Silakan masuk.");
-    setView("login");
-  };
 
   // --- LOGIC: CRUD ---
   const handleUpload = (e: React.FormEvent) => {
@@ -145,21 +120,12 @@ export default function PrelovedApp() {
                   <h3 className="font-bold text-slate-800 mb-1 line-clamp-1">{item.title}</h3>
                   <p className="text-xl font-black text-indigo-600 mb-4">Rp {formatIDR(item.price)}</p>
                   
-                  {user?.role === "ADMIN" ? (
-                    <button 
-                      onClick={() => handleDelete(item.id)}
-                      className="w-full py-3 rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all font-bold text-xs flex items-center justify-center gap-2 border border-red-100"
-                    >
-                      <Trash2 size={14} /> HAPUS BARANG (ADMIN)
-                    </button>
-                  ) : (
-                    <button 
-                      className="cursor-pointer w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
-                      onClick={() => handleClickDetail(item.id)}
-                    >
-                      LIHAT DETAIL
-                    </button>
-                  )}
+                  <button 
+                    className="cursor-pointer w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
+                    onClick={() => handleClickDetail(item.id)}
+                  >
+                    LIHAT DETAIL
+                  </button>
                 </div>
               </div>
             ))}

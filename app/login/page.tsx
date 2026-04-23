@@ -13,8 +13,7 @@ export default function LoginPage() {
     e.preventDefault();
     if (!authData.email || !authData.password) return alert("Isi semua bidang!");
 
-    const role = authData.email.toLowerCase().includes("admin") ? "ADMIN" : "USER";
-    const newUser = { email: authData.email, role };
+    const newUser = { email: authData.email };
 
     localStorage.setItem("preloved_user", JSON.stringify(newUser));
     setAuthData({ email: "", password: "" });
@@ -49,9 +48,9 @@ export default function LoginPage() {
                 onChange={(e) => setAuthData({ ...authData, password: e.target.value })}
                 required
               />
-              <button className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">MASUK</button>
+              <button className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 cursor-pointer">MASUK</button>
             </form>
-            <button onClick={() => router.push("/register")} className="w-full mt-6 text-sm font-bold text-slate-400 hover:text-indigo-600 transition">BELUM PUNYA AKUN? DAFTAR</button>
+            <button onClick={() => router.push("/register")} className="w-full mt-6 text-sm font-bold text-slate-400 hover:text-indigo-600 transition cursor-pointer">BELUM PUNYA AKUN? DAFTAR</button>
           </div>
         </div>
       </main>

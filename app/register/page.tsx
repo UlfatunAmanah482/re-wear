@@ -45,9 +45,9 @@ export default function RegisterPage() {
                 onChange={(e) => setAuthData({ ...authData, password: e.target.value })}
                 required
               />
-              <button className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-slate-800 transition shadow-lg">DAFTAR AKUN</button>
+              <button className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-slate-800 transition shadow-lg cursor-pointer">DAFTAR AKUN</button>
             </form>
-            <button onClick={() => router.push("/login")} className="mt-6 text-sm font-bold text-slate-400 hover:text-indigo-600 transition">SUDAH PUNYA AKUN? LOGIN</button>
+            <button onClick={() => router.push("/login")} className="mt-6 text-sm font-bold text-slate-400 hover:text-indigo-600 transition cursor-pointer">SUDAH PUNYA AKUN? LOGIN</button>
           </div>
         </div>
       </main>

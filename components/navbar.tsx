@@ -65,10 +65,9 @@ export default function Navbar() {
                     <UserIcon size={16} />
                   </button>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-indigo-500 leading-none uppercase">{user.role}</span>
                     <span className="text-xs font-bold text-slate-700 truncate max-w-[80px]">{user.email.split('@')[0]}</span>
                   </div>
-                  <button onClick={handleLogout} className="ml-2 text-slate-400 hover:text-red-500 transition">
+                  <button onClick={handleLogout} className="ml-2 text-slate-400 hover:text-red-500 transition cursor-pointer">
                     <LogOut size={16} />
                   </button>
                 </div>

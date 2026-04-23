@@ -32,7 +32,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
                 <h1 className="text-3xl font-black">{user.email.split('@')[0]}</h1>
                 <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                  {user.role}
+                  USER
                 </span>
               </div>
               <p className="text-blue-100 mb-6">{user.email}</p>

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Kamera Analog Canon AE-1",
+    "price": 1500000,
+    "description": "Kamera legendaris untuk pecinta fotografi film. Kondisi 90% mulus, lightmeter menyala akurat, sudah termasuk strap kulit original.",
+    "image": "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?w=800",
+    "seller": "Budi",
+    "sellerEmail": "budi@mail.com",
+    "phone": "62895393389757"
+  },
+  {
+    "id": 2,
+    "title": "Jaket Levi's Vintage 70s",
+    "price": 850000,
+    "description": "Jaket denim original era 70-an. Warna pudar alami (faded), tidak ada sobek, ukuran fit L dewasa.",
+    "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800",
+    "seller": "Siska",
+    "sellerEmail": "siska@mail.com",
+    "phone": "62895393389757"
+  },
+  {
+    "id": 3,
+    "title": "Sepatu Converse 70s Black",
+    "price": 550000,
+    "description": "Converse Chuck Taylor 70s. Baru dipakai 2 kali, tapak masih tebal, box lengkap. Dijamin original 100%.",
+    "image": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800",
+    "seller": "Andi",
+    "sellerEmail": "andi@mail.com",
+    "phone": "62895393389757"
+  }
+]

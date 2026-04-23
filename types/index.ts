@@ -1,8 +1,8 @@
 export type User = {
   email: string,
   password?: string,
-  role: "user" | "admin",
-  name?: string,
+  name: string,
+  products?: Item[],
 }
 
 export type Item = {

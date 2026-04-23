@@ -19,17 +19,16 @@ export default function ItemCard({ item }: { item: Item }) {
         </div>
       </Link>
       
-      {user?.role === 'admin' && (
+      {/* {user?.role === 'admin' && (
         <button 
           onClick={(e) => {
-            e.preventDefault(); // Biar tidak trigger Link
-            // deleteItem(item.id);
+            e.preventDefault();
           }}
           className="mt-2 w-full py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white transition"
         >
           HAPUS (ADMIN)
         </button>
-      )}
+      )} */}
     </div>
   );
 }
