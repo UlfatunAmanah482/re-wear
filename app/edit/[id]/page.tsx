@@ -1,5 +1,5 @@
 import ProductForm from "@/components/product-form";
 
-export default function UploadPage() {
+export default function EditPage() {
   return <ProductForm />;
 }
