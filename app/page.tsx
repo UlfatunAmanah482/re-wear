@@ -15,8 +15,7 @@ export default function PrelovedApp() {
   };
 
   const handleClickDetail = (id: string | number) => {
-    // Jika user ada (sudah login), ke detail. Jika tidak, ke login.
-    router.push(user ? `/product/${id}` : `/login`);
+    router.push(`/product/${id}`);
   };
 
   // Proteksi Hydration (Sangat penting di Next.js)

@@ -3,39 +3,47 @@
 import { useParams, useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import { formatIDR } from "@/lib/utils";
-import { ChevronLeft, MessageSquare, Edit, Trash2 } from "lucide-react"; // Tambah icon
+import { ChevronLeft, MessageSquare, Edit, Trash2, UserIcon } from "lucide-react"; // Tambah icon
 import Navbar from "@/components/navbar";
 import { useEffect, useState } from "react";
 import { Item } from "@/types";
 
 export default function ProductDetail() {
-  const [item, setItem] = useState<Item | null>(null);
   const { id } = useParams();
-  const { getItemById, user } = useApp(); // Ambil 'user' yang sedang login dari context
+  const { getItemById, selectedItem, clearSelectedItem, user, deleteItem } = useApp();
   const router = useRouter();
 
   useEffect(() => {
-    setItem(getItemById(Number(id)) ?? null);
-  }, [id, getItemById]);
+    getItemById(Number(id));
+    
+    // Cleanup: Reset selectedItem when leaving the page
+    return () => clearSelectedItem(); 
+  }, [id]);
 
-  // Logika pengecekan pemilik
-  // Sesuaikan properti 'id' atau 'username' sesuai dengan struktur data Item dan User kamu
-  const isOwner = item && user && item.sellerEmail === user.email;
+  // Use selectedItem directly from useApp()
+  const item = selectedItem; 
+
+  if (!item) return <div>Loading...</div>;
+
+  const isOwner = item && user && item.user.email === user.email;
 
   const handleChat = () => {
     const message = "Halo kak, saya tertarik dengan produk ini";
-    const url = `https://wa.me/${item?.phone}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${item?.user.phone}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
   };
 
   const handleEdit = () => {
-    router.push(`/edit-product/${item?.id}`);
+    router.push(`/edit/${item?.id}`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
-      // Panggil fungsi delete dari context di sini
-      console.log("Menghapus produk:", item?.id);
+      try {
+        await deleteItem(Number(id));
+      } catch (error) {
+        alert(error);
+      }
     }
   };
 
@@ -51,7 +59,7 @@ export default function ProductDetail() {
         {item ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="rounded-3xl overflow-hidden shadow-2xl bg-white border">
-              <img src={item.image} alt={item.title} className="w-full h-[500px] object-cover" />
+              <img src={item.image || "/images/default-product.jpeg"} alt={item.title} className="w-full h-[500px] object-cover" />
             </div>
 
             <div className="flex flex-col justify-center">
@@ -69,11 +77,11 @@ export default function ProductDetail() {
               {/* Tampilan Penjual */}
               <div className="flex items-center gap-4 mb-8 p-4 border border-gray-300 rounded-2xl bg-white">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {item.seller[0]}
+                  <UserIcon size={16} />
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Penjual</p>
-                  <p className="font-bold">{item.seller} {isOwner && <span className="text-xs text-blue-500 font-normal">(Anda)</span>}</p>
+                  <p className="font-bold">{item.user.name} {isOwner && <span className="text-xs text-blue-500 font-normal">(Anda)</span>}</p>
                 </div>
               </div>
 
@@ -83,13 +91,13 @@ export default function ProductDetail() {
                   <>
                     <button
                       onClick={handleEdit}
-                      className="flex-1 bg-amber-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-amber-600 transition shadow-lg shadow-amber-100"
+                      className="flex-1 bg-amber-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-amber-600 transition shadow-lg shadow-amber-100 cursor-pointer"
                     >
                       <Edit size={20} /> Edit Produk
                     </button>
                     <button
                       onClick={handleDelete}
-                      className="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-lg shadow-red-100"
+                      className="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-lg shadow-red-100 cursor-pointer"
                     >
                       <Trash2 size={20} /> Hapus
                     </button>
@@ -97,7 +105,7 @@ export default function ProductDetail() {
                 ) : (
                   <button
                     onClick={handleChat}
-                    className="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition"
+                    className="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition cursor-pointer"
                   >
                     <MessageSquare size={20} /> Chat Penjual
                   </button>

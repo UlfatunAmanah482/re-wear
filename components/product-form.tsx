@@ -9,60 +9,73 @@ import { useApp } from "@/context/AppContext";
 export default function ProductForm() {
   const router = useRouter();
   const params = useParams();
-  const { getItemById, user } = useApp();
+  
+  // Ambil fungsi dan state global dari context
+  const { user, addItem, editItem, getItemById, selectedItem, clearSelectedItem } = useApp();
 
-  // Ambil ID dari URL (jika ada)
   const productId = params.id;
   const isEditMode = Boolean(productId);
 
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
     image: "",
     description: "",
-    category: "Preloved",
+    category: "Pakaian",
   });
 
-  // Pre-fill data jika mode edit
+  // --- 1. TRIGGER AMBIL DATA DARI API ---
   useEffect(() => {
     if (isEditMode && productId) {
-      const existingItem = getItemById(Number(productId));
-      if (existingItem) {
-        setFormData({
-          title: existingItem.title,
-          price: existingItem.price.toString(),
-          image: existingItem.image,
-          description: existingItem.description || "",
-          category: existingItem.category || "Preloved",
-        });
-      }
+      getItemById(Number(productId));
     }
-  }, [productId, isEditMode, getItemById]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+    // Cleanup: Bersihkan selectedItem saat meninggalkan halaman
+    return () => clearSelectedItem();
+  }, [productId, isEditMode]);
+
+  // --- 2. WATCH: ISI FORM SAAT SELECTED_ITEM TERISI ---
+  useEffect(() => {
+    // Jika data sudah masuk ke global state selectedItem, pindahkan ke local form
+    if (isEditMode && selectedItem && selectedItem.id === Number(productId)) {
+      setFormData({
+        title: selectedItem.title,
+        price: selectedItem.price.toString(),
+        image: selectedItem.image || "",
+        description: selectedItem.description || "",
+        category: selectedItem.category || "Pakaian",
+      });
+    }
+  }, [selectedItem, isEditMode, productId]);
+
+  // --- 3. HANDLE SUBMIT ---
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     const payload = {
       title: formData.title,
       price: parseInt(formData.price),
-      image: formData.image || "https://images.unsplash.com/photo-1584305116359-541405d6f4d3?w=500",
+      image: formData.image,
       description: formData.description,
       category: formData.category,
-      seller: user?.name || "Anonim", // Ambil dari context user
-      sellerEmail: user?.email,
     };
 
-    if (isEditMode) {
-      console.log(Number(productId), payload);
-      // updateProduct(Number(productId), payload);
-      alert("Produk berhasil diperbarui!");
-    } else {
-      console.log({ ...payload, id: Date.now() });
-      // addProduct({ ...payload, id: Date.now() });
-      alert("Produk berhasil diupload!");
+    try {
+      if (isEditMode) {
+        await editItem(Number(productId), payload);
+        alert("Produk berhasil diperbarui!");
+      } else {
+        await addItem(payload);
+        alert("Produk berhasil diupload!");
+      }
+      router.push("/");
+    } catch (error: any) {
+      alert(error.message || "Gagal menyimpan produk");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/"); // Kembali ke home setelah selesai
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +94,6 @@ export default function ProductForm() {
         <div className="w-full max-w-2xl">
           <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl border border-slate-50">
             
-            {/* Header */}
             <div className="flex justify-between items-center mb-10">
               <div>
                 <h2 className="text-3xl font-black text-slate-900">
@@ -91,22 +103,18 @@ export default function ProductForm() {
                   {isEditMode ? "Perbarui informasi produk Anda" : "Isi detail barang yang ingin Anda jual"}
                 </p>
               </div>
-              <button 
-                onClick={() => router.back()} 
-                className="p-3 hover:bg-slate-100 rounded-full transition-all cursor-pointer group"
-              >
+              <button onClick={() => router.back()} className="p-3 hover:bg-slate-100 rounded-full cursor-pointer group">
                 <X className="group-hover:rotate-90 transition-transform" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              
-              {/* Preview Gambar */}
+              {/* Bagian Upload Gambar */}
               <div className="relative group w-full h-48 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden transition-all hover:border-indigo-400">
                 {formData.image ? (
                   <>
                     <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                       <label className="cursor-pointer bg-white text-slate-900 px-4 py-2 rounded-xl font-bold text-sm">
                         Ganti Foto
                         <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
@@ -122,11 +130,11 @@ export default function ProductForm() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Nama Barang */}
-                <div className="col-span-1 md:col-span-2">
-                  <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase ml-2 mb-2">
-                    <Package size={14} /> Nama Barang
+              {/* Input Nama Barang */}
+              <div className="space-y-4">
+                <div>
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest">
+                    <Package size={14} className="text-indigo-600" /> Nama Barang
                   </label>
                   <input
                     placeholder="Contoh: Sepatu Nike Air Jordan"
@@ -137,10 +145,9 @@ export default function ProductForm() {
                   />
                 </div>
 
-                {/* Harga */}
-                <div className="col-span-1 md:col-span-2">
-                  <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase ml-2 mb-2">
-                    <DollarSign size={14} /> Harga (Rp)
+                <div>
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest">
+                    <DollarSign size={14} className="text-indigo-600" /> Harga (Rp)
                   </label>
                   <input
                     type="number"
@@ -151,34 +158,37 @@ export default function ProductForm() {
                     required
                   />
                 </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest">
+                    <AlignLeft size={14} className="text-indigo-600" /> Deskripsi
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Ceritakan kondisi barang Anda..."
+                    className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium resize-none"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    required
+                  />
+                </div>
               </div>
 
-              {/* Deskripsi */}
-              <div>
-                <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase ml-2 mb-2">
-                  <AlignLeft size={14} /> Deskripsi
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Ceritakan kondisi barang Anda..."
-                  className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium resize-none"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-              </div>
-
-              {/* Tombol Aksi */}
               <div className="pt-6 flex flex-col md:flex-row gap-4">
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="flex-1 py-4 font-black text-slate-400 hover:bg-slate-50 rounded-2xl transition cursor-pointer order-2 md:order-1"
+                  disabled={loading}
+                  className="flex-1 py-4 font-black text-slate-400 hover:bg-slate-50 rounded-2xl transition cursor-pointer order-2 md:order-1 disabled:opacity-50"
                 >
                   BATAL
                 </button>
 
-                <button className="flex-1 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 transition shadow-xl shadow-indigo-100 cursor-pointer order-1 md:order-2">
-                  {isEditMode ? "SIMPAN" : "UPLOAD"}
+                <button 
+                  disabled={loading}
+                  className="flex-1 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 transition shadow-xl shadow-indigo-100 cursor-pointer order-1 md:order-2 disabled:bg-indigo-300"
+                >
+                  {loading ? "MEMPROSES..." : (isEditMode ? "SIMPAN" : "UPLOAD")}
                 </button>
               </div>
             </form>

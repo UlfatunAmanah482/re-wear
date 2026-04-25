@@ -10,16 +10,18 @@ const API_URL = "http://localhost:5000/api";
 interface AppContextType {
   items: Item[];
   user: User | null;
+  selectedItem: Item | null; // <--- NEW STATE
   isMounted: boolean;
   register: (data: any) => Promise<void>;
   login: (credentials: any) => Promise<void>;
   logout: () => void;
   fetchItems: () => Promise<void>;
-  fetchUser: () => Promise<void>; // Fungsi baru
+  fetchUser: () => Promise<void>;
   addItem: (data: any) => Promise<void>;
   editItem: (id: number, data: any) => Promise<void>;
   deleteItem: (id: number) => Promise<void>;
-  getItemById: (id: number) => Item | undefined;
+  getItemById: (id: number) => Promise<void>; // <--- UPDATED: No longer returns, just updates state
+  clearSelectedItem: () => void; // <--- HELPER to reset state
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,27 +29,26 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<Item[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null); // <--- NEW STATE
   const [isMounted, setIsMounted] = useState(false);
 
   const router = useRouter();
 
-  // --- 1. AMBIL DATA USER BERDASARKAN TOKEN (GET ME) ---
+  // --- 1. USER SESSION ---
   const fetchUser = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
     try {
       const res = await axios.get(`${API_URL}/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUser(res.data); // Set data user terbaru dari DB
+      setUser(res.data);
     } catch (error) {
-      console.error("Sesi habis atau token tidak valid");
-      logout(); // Jika token bermasalah, paksa logout
+      logout();
     }
   };
 
-  // --- 2. AMBIL SEMUA PRODUK ---
+  // --- 2. FETCH ALL ITEMS ---
   const fetchItems = async () => {
     try {
       const res = await axios.get(`${API_URL}/products`);
@@ -57,22 +58,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // --- 3. INITIAL LOAD (Dijalankan saat web dibuka/refresh) ---
   useEffect(() => {
     const init = async () => {
-      await fetchItems(); // Ambil barang
-      await fetchUser();  // Ambil profil user jika ada token
+      await fetchItems();
+      await fetchUser();
       setIsMounted(true);
     };
     init();
   }, []);
 
-  // --- 4. LOGIN ---
+  // --- 3. AUTH LOGIC ---
   const login = async (credentials: any) => {
     try {
       const res = await axios.post(`${API_URL}/login`, credentials);
       const { token, user: userData } = res.data;
-
       localStorage.setItem("token", token);
       setUser(userData);
     } catch (error: any) {
@@ -80,14 +79,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // --- 5. LOGOUT ---
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
     router.push("/login");
   };
 
-  // --- 6. REGISTER ---
   const register = async (data: any) => {
     try {
       await axios.post(`${API_URL}/register`, data);
@@ -97,7 +94,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // --- 7. ADD, EDIT, DELETE (Tetap Sama) ---
+  // --- 4. PRODUCT CRUD ---
   const addItem = async (data: any) => {
     const token = localStorage.getItem("token");
     try {
@@ -134,15 +131,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getItemById = (id: number) => {
-    return items.find((item) => item.id === id);
+  // --- 5. GET DETAIL & UPDATE GLOBAL STATE ---
+  const getItemById = async (id: number) => {
+    try {
+      const res = await axios.get(`${API_URL}/products/${id}`);
+      setSelectedItem(res.data); // <--- Updates the global selectedItem state
+    } catch (error: any) {
+      setSelectedItem(null);
+      throw new Error(error.response?.data?.message || "Produk tidak ditemukan");
+    }
   };
+
+  const clearSelectedItem = () => setSelectedItem(null);
 
   return (
     <AppContext.Provider
       value={{
         items,
         user,
+        selectedItem, // <--- Shared globally
         isMounted,
         register,
         login,
@@ -153,6 +160,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         editItem,
         deleteItem,
         getItemById,
+        clearSelectedItem,
       }}
     >
       {children}
