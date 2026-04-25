@@ -1,41 +1,16 @@
-import { getUser } from "@/services/api";
-import { User } from "@/types";
+import { useApp } from "@/context/AppContext";
 import { LogOut, Plus, Store, UserIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const { isMounted, user, logout } = useApp();
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const currentPage = pathname.split("/")[1];
+  const currentPage = (pathname || "").split("/")[1];
 
-  const fetchData = async () => {
-    try {
-      const res: any = await getUser();
-      console.log("res", res)
-      setUser(res);
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("preloved_user");
-  };
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("preloved_user");
-
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-
-    // fetchData();
-  }, [])
+  if (!isMounted) return null;
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
@@ -65,9 +40,9 @@ export default function Navbar() {
                     <UserIcon size={16} />
                   </button>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-700 truncate max-w-[80px]">{user.email.split('@')[0]}</span>
+                    <span className="text-xs font-bold text-slate-700 truncate max-w-[80px]">{user?.name}</span>
                   </div>
-                  <button onClick={handleLogout} className="ml-2 text-slate-400 hover:text-red-500 transition cursor-pointer">
+                  <button onClick={logout} className="ml-2 text-slate-400 hover:text-red-500 transition cursor-pointer">
                     <LogOut size={16} />
                   </button>
                 </div>

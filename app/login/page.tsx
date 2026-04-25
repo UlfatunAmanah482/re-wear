@@ -1,5 +1,6 @@
 "use client";
 
+import { useApp } from "@/context/AppContext";
 import { LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -8,16 +9,20 @@ export default function LoginPage() {
   const [authData, setAuthData] = useState({ email: "", password: "" });
 
   const router = useRouter();
+  const { login } = useApp();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!authData.email || !authData.password) return alert("Isi semua bidang!");
 
-    const newUser = { email: authData.email };
-
-    localStorage.setItem("preloved_user", JSON.stringify(newUser));
-    setAuthData({ email: "", password: "" });
-    router.push("/")
+    try {
+      await login(authData)
+      router.push("/");
+      setAuthData({ email: "", password: "" });
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
