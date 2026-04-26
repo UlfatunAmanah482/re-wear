@@ -53,6 +53,7 @@ export default function ProductForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log("user", user)
 
     const payload = {
       title: formData.title,
@@ -60,6 +61,7 @@ export default function ProductForm() {
       image: formData.image,
       description: formData.description,
       category: formData.category,
+      address: user?.address,
     };
 
     try {
@@ -81,11 +83,21 @@ export default function ProductForm() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData({ ...formData, image: imageUrl });
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Ukuran foto terlalu besar! Maksimal 5MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFormData({ ...formData, image: base64String });
+      };
+
+      reader.readAsDataURL(file);
     }
   };
-
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-slate-900 font-sans">
       <Navbar />

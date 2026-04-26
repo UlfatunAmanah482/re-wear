@@ -36,7 +36,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // --- 1. USER SESSION ---
   const fetchUser = async () => {
-    const token = localStorage.getItem("token");
+    const token = typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null;
     if (!token) return;
     try {
       const res = await axios.get(`${API_URL}/user`, {
@@ -57,15 +59,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       console.error("Gagal mengambil produk:", error);
     }
   };
-
-  useEffect(() => {
-    const init = async () => {
-      await fetchItems();
-      await fetchUser();
-      setIsMounted(true);
-    };
-    init();
-  }, []);
 
   // --- 3. AUTH LOGIC ---
   const login = async (credentials: any) => {
@@ -102,6 +95,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchItems();
+      await fetchUser();
     } catch (error: any) {
       throw new Error(error.response?.data?.message || "Gagal menambah barang");
     }
@@ -126,6 +120,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems((prev) => prev.filter((item) => item.id !== id));
+      fetchUser();
+      router.push("/");
     } catch (error: any) {
       alert(error.response?.data?.message || "Gagal hapus barang");
     }
@@ -142,14 +138,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  useEffect(() => {
+    const init = async () => {
+      await fetchItems();
+      await fetchUser();
+      setIsMounted(true);
+    };
+    init();
+  }, []);
+
   const clearSelectedItem = () => setSelectedItem(null);
+
+  if (!isMounted) return null;
 
   return (
     <AppContext.Provider
       value={{
         items,
         user,
-        selectedItem, // <--- Shared globally
+        selectedItem,
         isMounted,
         register,
         login,

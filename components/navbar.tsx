@@ -15,7 +15,7 @@ export default function Navbar() {
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => console.log("home")}>
+        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push("/")}>
           <div className="bg-indigo-600 p-2 rounded-xl group-hover:rotate-12 transition-transform">
             <Store className="text-white" size={20} />
           </div>

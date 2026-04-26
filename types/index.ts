@@ -3,6 +3,7 @@ export type User = {
   password?: string,
   name?: string,
   phone: string,
+  address: string,
   products?: Item[],
 }
 
@@ -13,5 +14,6 @@ export type Item = {
   description: string,
   category: string,
   image: string,
+  address: string,
   user: User,
 }

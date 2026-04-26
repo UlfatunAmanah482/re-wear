@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 
 export default function PrelovedApp() {
-  const { items, user, isMounted } = useApp();
+  const { items, isMounted } = useApp();
   const router = useRouter();
 
   // Helper Format Rupiah
@@ -57,9 +57,6 @@ export default function PrelovedApp() {
                     alt={item.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-700" 
                   />
-                  {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase text-indigo-600 shadow-sm border border-indigo-50">
-                    {item.user?.name || "Seller"}
-                  </div> */}
                 </div>
 
                 <div className="px-2 pb-2">

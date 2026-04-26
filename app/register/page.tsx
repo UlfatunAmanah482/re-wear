@@ -1,11 +1,12 @@
 "use client";
 
+import { INDONESIA_CITIES } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterPage() {
-  const [authData, setAuthData] = useState({ name: "", email: "", password: "", phone: "" });
+  const [authData, setAuthData] = useState({ name: "", email: "", password: "", phone: "", address: "" });
 
   const router = useRouter();
   const { register } = useApp();
@@ -19,7 +20,7 @@ export default function RegisterPage() {
 
     try {
       await register(authData);
-      setAuthData({ name: "", email: "", password: "", phone: "" });
+      setAuthData({ name: "", email: "", password: "", phone: "", address: "" });
     } catch (error) {
       alert(error);
     }
@@ -64,6 +65,17 @@ export default function RegisterPage() {
                 onChange={(e) => setAuthData({ ...authData, phone: e.target.value })}
                 required
               />
+              <select
+                className="w-full p-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                value={authData.address}
+                onChange={(e) => setAuthData({ ...authData, address: e.target.value })}
+                required
+              >
+                <option value="" disabled>Pilih Kota Asal</option>
+                {INDONESIA_CITIES.map((city, index) => (
+                  <option key={index} value={city}>{city}</option>
+                ))}
+              </select>
               <button className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-slate-800 transition shadow-lg cursor-pointer">DAFTAR AKUN</button>
             </form>
             <button onClick={() => router.push("/login")} className="mt-6 text-sm font-bold text-slate-400 hover:text-indigo-600 transition cursor-pointer">SUDAH PUNYA AKUN? LOGIN</button>
