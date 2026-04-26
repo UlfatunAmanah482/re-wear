@@ -2,6 +2,7 @@ export type User = {
   email: string,
   password?: string,
   name?: string,
+  role: string,
   phone: string,
   address: string,
   products?: Item[],

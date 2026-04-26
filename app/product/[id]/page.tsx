@@ -110,6 +110,15 @@ export default function ProductDetail() {
                     <MessageSquare size={20} /> Chat Penjual
                   </button>
                 )}
+
+                {user && user.role === "admin" && (
+                  <button 
+                    onClick={handleDelete}
+                    className="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-lg shadow-red-100 cursor-pointer"
+                  >
+                    HAPUS (ADMIN)
+                  </button>
+                )}
               </div>
             </div>
           </div>

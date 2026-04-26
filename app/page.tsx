@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
+import ItemCard from "@/components/item-card";
 
 export default function PrelovedApp() {
   const { items, isMounted } = useApp();
@@ -23,7 +24,6 @@ export default function PrelovedApp() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-slate-900 font-sans">
-      
       <Navbar />
 
       {/* HERO SECTION */}
@@ -47,32 +47,7 @@ export default function PrelovedApp() {
         {items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {items.map((item) => (
-              <div 
-                key={item.id} 
-                className="bg-white rounded-[2rem] border border-slate-100 p-3 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group"
-              >
-                <div className="relative h-60 w-full mb-4 overflow-hidden rounded-[1.5rem]">
-                  <img 
-                    src={item.image || "/images/default-product.jpeg"} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition duration-700" 
-                  />
-                </div>
-
-                <div className="px-2 pb-2">
-                  <h3 className="font-bold text-slate-800 mb-1 line-clamp-1">{item.title}</h3>
-                  <p className="text-xl font-black text-indigo-600 mb-4">
-                    Rp {formatIDR(item.price)}
-                  </p>
-                  
-                  <button 
-                    className="cursor-pointer w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
-                    onClick={() => handleClickDetail(item.id)}
-                  >
-                    LIHAT DETAIL
-                  </button>
-                </div>
-              </div>
+              <ItemCard key={item.id} item={item} isProfilePage={false} />
             ))}
           </div>
         ) : (

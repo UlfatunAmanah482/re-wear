@@ -1,9 +1,23 @@
+import { useApp } from '@/context/AppContext';
 import { formatIDR } from '@/lib/utils';
 import { Item } from '@/types';
 import { MapPin } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ItemCard({ item }: { item: Item }) {
+export default function ItemCard({ item, isProfilePage }: { item: Item, isProfilePage: boolean }) {
+  const { user, deleteItem } = useApp();
+  console.log("user", user)
+
+  const handleDelete = async (id: number) => {
+    if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+      try {
+        await deleteItem(Number(id));
+      } catch (error) {
+        alert(error);
+      }
+    }
+  };
+
   return (
     <div className="group bg-white rounded-[2rem] border p-3 shadow-sm hover:shadow-2xl transition-all duration-500">
       <Link href={`/product/${item.id}`}>
@@ -18,18 +32,27 @@ export default function ItemCard({ item }: { item: Item }) {
             <span>{item.address || "Indonesia"}</span>
           </div>
         </div>
+        <div className="px-2 py-2">
+          <button
+            className="cursor-pointer w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
+          >
+            LIHAT DETAIL
+          </button>
+        </div>
       </Link>
 
-      {/* {user?.role === 'admin' && (
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-          }}
-          className="mt-2 w-full py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white transition"
-        >
-          HAPUS (ADMIN)
-        </button>
-      )} */}
+      {isProfilePage && (
+        user && user?.role === 'admin' && (
+          <div className="px-2 py-2">
+            <button
+              onClick={() => handleDelete(item.id)}
+              className="w-full px-4 py-2 bg-red-50 text-red-500 rounded-2xl text-sm font-black hover:bg-red-500 hover:text-white transition cursor-pointer"
+            >
+              HAPUS (ADMIN)
+            </button>
+          </div>
+        )
+      )}
     </div>
   );
 }

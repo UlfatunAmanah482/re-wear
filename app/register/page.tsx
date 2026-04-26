@@ -4,9 +4,12 @@ import { INDONESIA_CITIES } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import type { User } from "@/types";
+
+const defaultData = { name: "", email: "", password: "", phone: "", address: "", role: "user" }
 
 export default function RegisterPage() {
-  const [authData, setAuthData] = useState({ name: "", email: "", password: "", phone: "", address: "" });
+  const [authData, setAuthData] = useState<User>(defaultData);
 
   const router = useRouter();
   const { register } = useApp();
@@ -20,7 +23,7 @@ export default function RegisterPage() {
 
     try {
       await register(authData);
-      setAuthData({ name: "", email: "", password: "", phone: "", address: "" });
+      setAuthData(defaultData);
     } catch (error) {
       alert(error);
     }

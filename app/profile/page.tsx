@@ -5,16 +5,30 @@ import { useRouter } from "next/navigation";
 import { Package } from "lucide-react";
 import ItemCard from "@/components/item-card";
 import Navbar from "@/components/navbar";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
-  const { user, isMounted, logout } = useApp();
+  const { items, user, isMounted, logout, fetchUser } = useApp();
   const router = useRouter();
 
   const myProducts = user?.products || [];
-  const hasProducts = myProducts.length > 0;
+  const isAdmin = user && user.role === "admin";
+  const hasProducts = myProducts.length > 0 || isAdmin;
+
+  const fetchData = async () => {
+    try {
+      await fetchUser();
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   if (!isMounted) return null;
   if (!user) { router.push("/login"); return null; }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-slate-900 font-sans">
@@ -33,7 +47,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
                   <h1 className="text-3xl font-black">{user?.name}</h1>
                   <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                    USER
+                    {user.role}
                   </span>
                 </div>
                 <p className="text-blue-100 mb-6">{user?.email}</p>
@@ -53,22 +67,34 @@ export default function ProfilePage() {
         {/* Tabs / Content */}
         <div className="flex items-center gap-8 border-b mb-8 px-4 font-bold text-gray-400">
           <button className="text-blue-600 border-b-2 border-blue-600 pb-4 flex items-center gap-2">
-            <Package size={18} /> Produk Saya
+            <Package size={18} /> {isAdmin ? "List Produk" : "Produk Saya"}
           </button>
         </div>
 
         {/* List Produk User */}
         {hasProducts ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {user?.products?.map((item: any) => (
-              <ItemCard key={item.id} item={item} />
-            ))}
+            {isAdmin ? (
+              items?.map((item: any) => (
+                <ItemCard key={item.id} item={item} isProfilePage={true} />
+              ))
+            ) : (
+              user?.products?.map((item: any) => (
+                <ItemCard key={item.id} item={item} isProfilePage={true} />
+              ))
+            )}
           </div>
         ) : (
           <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
             <Package className="mx-auto text-gray-300 mb-4" size={48} />
-            <p className="text-gray-500 font-bold">Anda belum mengunggah barang apapun.</p>
-            <button onClick={() => router.push("/upload")} className="mt-4 text-blue-600 font-bold cursor-pointer">Mulai Jual Sekarang &rarr;</button>
+            {isAdmin ? (
+              <p className="text-gray-500 font-bold">Belum ada produk yang ditambahkan.</p>
+            ) : (
+              <>
+                <p className="text-gray-500 font-bold">Anda belum mengunggah barang apapun.</p>
+                <button onClick={() => router.push("/upload")} className="mt-4 text-blue-600 font-bold cursor-pointer">Mulai Jual Sekarang &rarr;</button>
+              </>
+            )}
           </div>
         )}
       </main>
