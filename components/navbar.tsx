@@ -25,28 +25,17 @@ export default function Navbar() {
         {currentPage !== "profile" && (
           <div className="flex items-center gap-2 md:gap-4">
             {user ? (
-              <>
-                {currentPage !== "upload" && (
-                  <button
-                    onClick={() => router.push("/upload")}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
-                  >
-                    <Plus size={18} /> <span className="hidden sm:inline cursor-pointer">Mulai Jual</span>
-                  </button>
-                )}
-                <div className="h-8 w-[1px] bg-slate-200 mx-1 hidden sm:block"></div>
-                <div className="flex items-center gap-3 bg-slate-50 p-1 pr-3 rounded-full border border-slate-100">
-                  <button onClick={() => router.push("/profile")} className="cursor-pointer bg-white p-1.5 rounded-full shadow-sm text-indigo-600">
-                    <UserIcon size={16} />
-                  </button>
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-700 truncate max-w-[80px]">{user?.name}</span>
-                  </div>
-                  <button onClick={logout} className="ml-2 text-slate-400 hover:text-red-500 transition cursor-pointer">
-                    <LogOut size={16} />
-                  </button>
+              <div className="flex items-center gap-3 bg-slate-50 p-1 pr-3 rounded-full border border-slate-100">
+                <button onClick={() => router.push("/profile")} className="cursor-pointer bg-white p-1.5 rounded-full shadow-sm text-indigo-600">
+                  <UserIcon size={16} />
+                </button>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-slate-700 truncate max-w-[80px]">{user?.name}</span>
                 </div>
-              </>
+                <button onClick={logout} className="ml-2 text-slate-400 hover:text-red-500 transition cursor-pointer">
+                  <LogOut size={16} />
+                </button>
+              </div>
             ) : (
               <div className="flex items-center gap-2">
                 <button onClick={() => router.push("/login")} className="cursor-pointer text-sm font-bold px-4 py-2 text-slate-600 hover:text-indigo-600 transition">Masuk</button>

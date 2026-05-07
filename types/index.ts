@@ -17,4 +17,5 @@ export type Item = {
   image: string,
   address: string,
   user: User,
+  name?: string,
 }

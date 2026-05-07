@@ -2,7 +2,7 @@
 
 import { useApp } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
-import { Package } from "lucide-react";
+import { ChevronLeft, Package } from "lucide-react";
 import ItemCard from "@/components/item-card";
 import Navbar from "@/components/navbar";
 import { useEffect } from "react";
@@ -24,7 +24,13 @@ export default function ProfilePage() {
   };
 
   if (!isMounted) return null;
-  if (!user) { router.push("/login"); return null; }
+  if (!user) return null;
+  
+  useEffect(() => {
+    if (!user && isMounted) {
+      router.push("/login");
+    }
+  }, [user, isMounted, router]);
 
   useEffect(() => {
     fetchData();
@@ -36,9 +42,12 @@ export default function ProfilePage() {
       {/* NAVBAR */}
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 py-10">
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-500 hover:text-blue-600 mb-6 transition cursor-pointer">
+          <ChevronLeft size={20} /> Kembali
+        </button>
         {/* Header Profil */}
         {user && (
-          <div className="relative bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[3rem] p-8 md:p-12 text-white overflow-hidden mb-10 shadow-2xl">
+          <div className="relative bg-gradient-to-r from-blue-800 to-indigo-900 rounded-[3rem] p-8 md:p-12 text-white overflow-hidden mb-10 shadow-2xl">
             <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
               <div className="w-32 h-32 bg-white/20 backdrop-blur-md rounded-full border-4 border-white/30 flex items-center justify-center text-4xl font-black">
                 {user?.email[0]?.toUpperCase()}

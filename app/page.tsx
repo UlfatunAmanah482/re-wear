@@ -5,10 +5,13 @@ import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import ItemCard from "@/components/item-card";
+import { useState } from "react";
+import { Plus } from "lucide-react";
 
 export default function PrelovedApp() {
   const { items, isMounted } = useApp();
   const router = useRouter();
+  const [search, setSearch] = useState("");
 
   // Helper Format Rupiah
   const formatIDR = (num: number) => {
@@ -19,7 +22,12 @@ export default function PrelovedApp() {
     router.push(`/product/${id}`);
   };
 
-  // Proteksi Hydration (Sangat penting di Next.js)
+  // Filter items berdasarkan nama
+  const filteredItems = items.filter((item) =>
+    item.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Proteksi Hydration
   if (!isMounted) return null;
 
   return (
@@ -42,20 +50,38 @@ export default function PrelovedApp() {
 
       {/* MAIN CONTENT */}
       <main className="max-w-6xl mx-auto px-4 pb-20">
-        
-        {/* Jika items ada isinya, tampilkan. Jika tidak, tampilkan loading/pesan kosong */}
-        {items.length > 0 ? (
+
+        {/* SEARCH FORM */}
+        <div className="mb-8">
+          <input
+            type="text"
+            placeholder="Cari produk..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+
+        {filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <ItemCard key={item.id} item={item} isProfilePage={false} />
             ))}
           </div>
         ) : (
           <div className="text-center py-20 text-slate-400 font-medium">
-            <p>Belum ada produk yang tersedia...</p>
+            <p>Produk tidak ditemukan...</p>
           </div>
         )}
       </main>
+
+      {/* FLOATING ADD BUTTON */}
+      <button
+        onClick={() => router.push("/upload")}
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center shadow-lg transition cursor-pointer"
+      >
+        <Plus size={28} />
+      </button>
 
       <Footer />
     </div>
