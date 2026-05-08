@@ -35,7 +35,7 @@ export default function PrelovedApp() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <div className="bg-indigo-900 text-white py-12 mb-10 px-4">
+      <div className="bg-gradient-to-r from-blue-800 to-indigo-900 text-white py-12 mb-10 px-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-lg">
             <h2 className="text-4xl md:text-5xl font-black leading-tight mb-4 tracking-tighter">

@@ -19,14 +19,14 @@ export default function ItemCard({ item, isProfilePage }: { item: Item, isProfil
   };
 
   return (
-    <div className="group bg-white rounded-[2rem] border p-3 shadow-sm hover:shadow-2xl transition-all duration-500">
+    <div className="group bg-white rounded-[2rem] border border-gray-100 p-3 shadow-sm hover:shadow-2xl transition-all duration-500">
       <Link href={`/product/${item.id}`}>
         <div className="relative h-52 w-full mb-3 overflow-hidden rounded-[1.5rem]">
           <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
         </div>
         <div className="px-2">
           <h3 className="font-bold text-gray-800 line-clamp-1">{item.title}</h3>
-          <p className="text-blue-600 font-black mb-2">Rp {formatIDR(item.price)}</p>
+          <p className="text-indigo-700 font-black mb-2">Rp{formatIDR(item.price)}</p>
           <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold uppercase mt-1">
             <MapPin size={12} className="text-red-400" />
             <span>{item.address || "Indonesia"}</span>
@@ -34,7 +34,7 @@ export default function ItemCard({ item, isProfilePage }: { item: Item, isProfil
         </div>
         <div className="px-2 py-2">
           <button
-            className="cursor-pointer w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
+            className="cursor-pointer w-full rounded-2xl bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 gap-2 text-sm font-bold transition shadow-lg shadow-indigo-100"
           >
             LIHAT DETAIL
           </button>

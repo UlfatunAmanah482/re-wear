@@ -25,18 +25,18 @@ export default function ProfilePage() {
     }
   };
 
-  if (!isMounted) return null;
-  if (!user) return null;
-  
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   useEffect(() => {
     if (!user && isMounted) {
       router.push("/login");
     }
   }, [user, isMounted, router]);
 
-  useEffect(() => {
-    fetchData();
-  }, [])
+  if (!isMounted) return null;
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-slate-900 font-sans">
