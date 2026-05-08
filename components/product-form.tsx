@@ -5,17 +5,9 @@ import { X, Upload, Package, DollarSign, AlignLeft } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
+import ConfirmModal from "./confirm-modal";
 
 export default function ProductForm() {
-  const router = useRouter();
-  const params = useParams();
-  
-  // Ambil fungsi dan state global dari context
-  const { user, addItem, editItem, getItemById, selectedItem, clearSelectedItem } = useApp();
-
-  const productId = params.id;
-  const isEditMode = Boolean(productId);
-
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -24,6 +16,16 @@ export default function ProductForm() {
     description: "",
     category: "Pakaian",
   });
+  const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+
+  // Ambil fungsi dan state global dari context
+  const { user, addItem, editItem, getItemById, selectedItem, clearSelectedItem } = useApp();
+
+  const router = useRouter();
+  const params = useParams();
+
+  const productId = params.id;
+  const isEditMode = Boolean(productId);
 
   // --- 1. TRIGGER AMBIL DATA DARI API ---
   useEffect(() => {
@@ -49,9 +51,17 @@ export default function ProductForm() {
     }
   }, [selectedItem, isEditMode, productId]);
 
-  // --- 3. HANDLE SUBMIT ---
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleShowModal = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isEditMode) {
+      setShowUpdateModal(true);
+    } else {
+      handleSubmit();
+    }
+  }
+
+  // --- 3. HANDLE SUBMIT ---
+  const handleSubmit = async () => {
     setLoading(true);
     console.log("user", user)
 
@@ -120,7 +130,7 @@ export default function ProductForm() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleShowModal} className="space-y-6">
               {/* Bagian Upload Gambar */}
               <div className="relative group w-full h-48 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden transition-all hover:border-indigo-400">
                 {formData.image ? (
@@ -207,6 +217,16 @@ export default function ProductForm() {
           </div>
         </div>
       </main>
+
+      <ConfirmModal
+        isOpen={showUpdateModal}
+        title="Simpan"
+        message="Apakah Anda yakin ingin mengubah data ini?"
+        confirmText="Simpan"
+        type="update"
+        onCancel={() => setShowUpdateModal(false)}
+        onConfirm={handleSubmit}
+      />
     </div>
   );
 }

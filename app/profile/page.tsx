@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, Package } from "lucide-react";
 import ItemCard from "@/components/item-card";
 import Navbar from "@/components/navbar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ConfirmModal from "@/components/confirm-modal";
 
 export default function ProfilePage() {
+  const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
   const { items, user, isMounted, logout, fetchUser } = useApp();
   const router = useRouter();
 
@@ -41,6 +43,7 @@ export default function ProfilePage() {
 
       {/* NAVBAR */}
       <Navbar />
+
       <main className="max-w-6xl mx-auto px-4 py-10">
         <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-500 hover:text-blue-600 mb-6 transition cursor-pointer">
           <ChevronLeft size={20} /> Kembali
@@ -61,7 +64,7 @@ export default function ProfilePage() {
                 </div>
                 <p className="text-blue-100 mb-6">{user?.email}</p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                  <button onClick={logout} className="bg-red-500/20 hover:bg-red-500 text-white border border-red-500/50 px-6 py-2 rounded-xl text-sm font-bold transition cursor-pointer">
+                  <button onClick={() => setShowLogoutModal(true)} className="bg-red-500/20 hover:bg-red-500 text-white border border-red-500/50 px-6 py-2 rounded-xl text-sm font-bold transition cursor-pointer">
                     Logout
                   </button>
                 </div>
@@ -107,6 +110,19 @@ export default function ProfilePage() {
           </div>
         )}
       </main>
+
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        title="Logout"
+        message="Apakah Anda yakin ingin keluar?"
+        confirmText="Keluar"
+        type="logout"
+        onCancel={() => setShowLogoutModal(false)}
+        onConfirm={() => {
+          logout();
+          setShowLogoutModal(false);
+        }}
+      />
     </div>
   );
 }

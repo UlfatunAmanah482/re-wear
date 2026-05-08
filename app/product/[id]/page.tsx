@@ -7,8 +7,11 @@ import { ChevronLeft, MessageSquare, Edit, Trash2, UserIcon } from "lucide-react
 import Navbar from "@/components/navbar";
 import { useEffect, useState } from "react";
 import { Item } from "@/types";
+import ConfirmModal from "@/components/confirm-modal";
 
 export default function ProductDetail() {
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+
   const { id } = useParams();
   const { getItemById, selectedItem, clearSelectedItem, user, deleteItem } = useApp();
   const router = useRouter();
@@ -96,7 +99,7 @@ export default function ProductDetail() {
                       <Edit size={20} /> Edit Produk
                     </button>
                     <button
-                      onClick={handleDelete}
+                      onClick={() => setShowDeleteModal(true)}
                       className="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-lg shadow-red-100 cursor-pointer"
                     >
                       <Trash2 size={20} /> Hapus
@@ -113,7 +116,7 @@ export default function ProductDetail() {
 
                 {user && user.role === "admin" && (
                   <button 
-                    onClick={handleDelete}
+                    onClick={() => setShowDeleteModal(true)}
                     className="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-lg shadow-red-100 cursor-pointer"
                   >
                     HAPUS (ADMIN)
@@ -126,6 +129,16 @@ export default function ProductDetail() {
           <div className="text-center py-20">Produk tidak ditemukan</div>
         )}
       </main>
+
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk? Produk ini akan dihapus secara permanen."
+        confirmText="Hapus"
+        type="delete"
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
