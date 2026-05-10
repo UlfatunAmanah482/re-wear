@@ -16,8 +16,6 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Registrasi Berhasil! Silakan masuk.");
-    router.push("/login");
 
     if (!authData.password || !authData.email || !authData.password || !authData.phone) return alert("Isi semua bidang!");
 

@@ -24,13 +24,13 @@ export default function ProductForm() {
   const router = useRouter();
   const params = useParams();
 
-  const productId = params.id;
+  const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const isEditMode = Boolean(productId);
 
   // --- 1. TRIGGER AMBIL DATA DARI API ---
   useEffect(() => {
     if (isEditMode && productId) {
-      getItemById(Number(productId));
+      getItemById(productId);
     }
 
     // Cleanup: Bersihkan selectedItem saat meninggalkan halaman
@@ -40,7 +40,7 @@ export default function ProductForm() {
   // --- 2. WATCH: ISI FORM SAAT SELECTED_ITEM TERISI ---
   useEffect(() => {
     // Jika data sudah masuk ke global state selectedItem, pindahkan ke local form
-    if (isEditMode && selectedItem && selectedItem.id === Number(productId)) {
+    if (isEditMode && selectedItem && selectedItem.id === productId) {
       setFormData({
         title: selectedItem.title,
         price: selectedItem.price.toString(),

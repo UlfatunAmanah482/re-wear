@@ -19,8 +19,8 @@ interface AppContextType {
   fetchUser: () => Promise<void>;
   addItem: (data: any) => Promise<void>;
   editItem: (id: number, data: any) => Promise<void>;
-  deleteItem: (id: number) => Promise<void>;
-  getItemById: (id: number) => Promise<void>; // <--- UPDATED: No longer returns, just updates state
+  deleteItem: (id: string) => Promise<void>;
+  getItemById: (id: string) => Promise<void>; // <--- UPDATED: No longer returns, just updates state
   clearSelectedItem: () => void; // <--- HELPER to reset state
 }
 
@@ -81,6 +81,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const register = async (data: any) => {
     try {
       await axios.post(`${API_URL}/register`, data);
+      alert("Registrasi Berhasil! Silakan masuk.");
       router.push("/login");
     } catch (error: any) {
       throw new Error(error.response?.data?.message || "Gagal mendaftar");
@@ -113,7 +114,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const deleteItem = async (id: number) => {
+  const deleteItem = async (id: string) => {
     const token = localStorage.getItem("token");
     try {
       await axios.delete(`${API_URL}/products/${id}`, {
@@ -128,7 +129,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   // --- 5. GET DETAIL & UPDATE GLOBAL STATE ---
-  const getItemById = async (id: number) => {
+  const getItemById = async (id: string) => {
     try {
       const res = await axios.get(`${API_URL}/products/${id}`);
       setSelectedItem(res.data); // <--- Updates the global selectedItem state
