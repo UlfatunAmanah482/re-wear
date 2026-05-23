@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface AppContextType {
   items: Item[];
@@ -41,7 +41,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       : null;
     if (!token) return;
     try {
-      const res = await axios.get(`${API_URL}/user`, {
+      const res = await axios.get(`${API_URL}/api/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
@@ -53,7 +53,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // --- 2. FETCH ALL ITEMS ---
   const fetchItems = async () => {
     try {
-      const res = await axios.get(`${API_URL}/products`);
+      const res = await axios.get(`${API_URL}/api/products`);
       setItems(res.data);
     } catch (error) {
       console.error("Gagal mengambil produk:", error);
@@ -63,7 +63,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // --- 3. AUTH LOGIC ---
   const login = async (credentials: any) => {
     try {
-      const res = await axios.post(`${API_URL}/login`, credentials);
+      const res = await axios.post(`${API_URL}/api/login`, credentials);
       const { token, user: userData } = res.data;
       localStorage.setItem("token", token);
       setUser(userData);
@@ -80,7 +80,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (data: any) => {
     try {
-      await axios.post(`${API_URL}/register`, data);
+      await axios.post(`${API_URL}/api/register`, data);
       alert("Registrasi Berhasil! Silakan masuk.");
       router.push("/login");
     } catch (error: any) {
@@ -92,7 +92,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const addItem = async (data: any) => {
     const token = localStorage.getItem("token");
     try {
-      await axios.post(`${API_URL}/products`, data, {
+      await axios.post(`${API_URL}/api/products`, data, {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchItems();
@@ -105,7 +105,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const editItem = async (id: number, data: any) => {
     const token = localStorage.getItem("token");
     try {
-      await axios.put(`${API_URL}/products/${id}`, data, {
+      await axios.put(`${API_URL}/api/products/${id}`, data, {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchItems();
@@ -117,7 +117,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const deleteItem = async (id: string) => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/products/${id}`, {
+      await axios.delete(`${API_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems((prev) => prev.filter((item) => item.id !== id));
@@ -131,7 +131,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // --- 5. GET DETAIL & UPDATE GLOBAL STATE ---
   const getItemById = async (id: string) => {
     try {
-      const res = await axios.get(`${API_URL}/products/${id}`);
+      const res = await axios.get(`${API_URL}/api/products/${id}`);
       setSelectedItem(res.data); // <--- Updates the global selectedItem state
     } catch (error: any) {
       setSelectedItem(null);
