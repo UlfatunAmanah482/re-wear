@@ -24,14 +24,21 @@ export default function ProductDetail() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     if (!id) return;
 
     getItemById(id);
 
     return () => clearSelectedItem();
-  }, [id]);
+  }, [id, user]);
 
   const item = selectedItem;
+
+  if (!user) return null;
 
   if (!item) return <div>Loading...</div>;
 
