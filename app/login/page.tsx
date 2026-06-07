@@ -39,7 +39,7 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-4">
               <input
                 type="email"
-                placeholder="Email (admin@mail.com)"
+                placeholder="Email"
                 className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
                 value={authData.email}
                 onChange={(e) => setAuthData({ ...authData, email: e.target.value })}

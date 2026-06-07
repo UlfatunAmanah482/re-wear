@@ -11,6 +11,7 @@ import ConfirmModal from "@/components/confirm-modal";
 export default function ProductDetail() {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
 
   const params = useParams();
 
@@ -24,14 +25,23 @@ export default function ProductDetail() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+    const fetchData = async () => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
 
-    if (!id) return;
+      if (!id) return;
 
-    getItemById(id);
+      try {
+        setLoading(true);
+        await getItemById(id);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
 
     return () => clearSelectedItem();
   }, [id, user]);
@@ -40,7 +50,46 @@ export default function ProductDetail() {
 
   if (!user) return null;
 
-  if (!item) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f8f9fa]">
+        <Navbar />
+
+        <main className="max-w-6xl mx-auto px-4 py-10">
+          <div className="bg-white p-5 rounded-lg shadow-lg">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
+              {/* Image Skeleton */}
+              <div className="w-full h-[500px] bg-gray-200 rounded-lg" />
+
+              {/* Detail Skeleton */}
+              <div className="space-y-4">
+                <div className="h-8 bg-gray-200 rounded w-3/4" />
+                <div className="h-8 bg-gray-200 rounded w-1/3" />
+                <div className="h-4 bg-gray-200 rounded w-1/2" />
+
+                <div className="bg-gray-100 p-4 rounded-2xl space-y-3">
+                  <div className="h-5 bg-gray-200 rounded w-40" />
+                  <div className="h-4 bg-gray-200 rounded" />
+                  <div className="h-4 bg-gray-200 rounded" />
+                  <div className="h-4 bg-gray-200 rounded w-4/5" />
+                </div>
+
+                <div className="flex items-center gap-4 p-4 border rounded-2xl">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full" />
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-20" />
+                    <div className="h-5 bg-gray-200 rounded w-40" />
+                  </div>
+                </div>
+
+                <div className="h-14 bg-gray-200 rounded-2xl" />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const isOwner = item && user && item.user.email === user.email;
 
@@ -182,8 +231,8 @@ export default function ProductDetail() {
             </button>
 
             <img
-              src={item.image || "/images/default-product.jpeg"}
-              alt={item.title}
+              src={item?.image || "/images/default-product.jpeg"}
+              alt={item?.title}
               className="w-full max-h-[85vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
